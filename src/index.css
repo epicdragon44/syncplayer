@@ -11,3 +11,177 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.colorheader {
+  margin-top: 3em;
+  color: #5E5560;
+  text-align: center;
+}
+
+.colorheadernospace {
+  color: #5E5560;
+  text-align: center;
+}
+
+.page {
+  padding-left: 15px;
+  padding-top: 15px;
+  padding-right: 15px;
+  padding-bottom: 15px;
+}
+
+input {
+  padding: 5px 5px;
+  margin: 5px 0;
+  box-sizing: border-box;
+  border: none;
+  width: 16.5em;
+  transition: width 0.4s ease-in-out;
+  border-bottom: 2px solid gray;
+  margin-bottom: 2em;
+}
+
+input:focus {
+  width: 20em;
+  border-bottom: 2px solid #5E5560;
+}
+
+button.photoupload {
+  background-color: #5E5560;
+  border: none;
+  color: white;
+  padding: 12px 30%;
+  border-radius: 10px 10px 10px 10px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+button {
+  background-color: #5E5560;
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 10px 10px 10px 10px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+button:hover {
+  color: #5E5560;
+  border: 3px solid #5E5560;
+  background-color: white;
+  padding: 12px 30px;
+  border-radius: 10px 10px 10px 10px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.upload-btn-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.btn {
+  border: 2px solid gray;
+  color: gray;
+  background-color: white;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+
+.upload-btn-wrapper input[type=file] {
+  font-size: 10px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
+
+.friend {
+  border: 3px solid #5E5560;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 5px;
+  margin-top: 5px;
+}
+
+.friendgreen {
+  border: 3px solid green;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 5px;
+  margin-top: 5px;
+}
+.friendred {
+  border: 3px solid red;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 5px;
+  margin-top: 5px;
+}
+
+input.nicesubmit {
+  background-color: #5E5560;
+  border: none;
+  color: white;
+  padding: 12px 10px;
+  border-radius: 10px 10px 10px 10px;
+  text-decoration: none;
+  margin-bottom: 25px;
+  cursor: pointer;
+  width: 12em;
+}
+
+input.nicesubmit:hover {
+  color: #5E5560;
+  border: 3px solid #5E5560;
+  background-color: white;
+  padding: 12px 10px;
+  width: 10em;
+  border-radius: 10px 10px 10px 10px;
+  text-decoration: none;
+  margin-bottom: 25px;
+  cursor: pointer;
+}
+
+.checkboxinput {
+  max-width: 2em;
+}
+
+.masksinput {
+  height: 3em;
+  font-size: large;
+  max-width: 3em;
+  text-align: center;
+}
+
+p.guide {
+  color: #5E5560;
+}
+
+ul.guide {
+  color: #5E5560;
+}
+
+li.guide {
+  color: #5E5560;
+}
+
+h1.guide {
+  margin-top: 3em;
+  color: #5E5560;
+  text-align: center;
+}
+
+h2.guide {
+  margin-top: 3em;
+  color: #5E5560;
+  text-align: center;
+}

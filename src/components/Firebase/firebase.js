@@ -4,82 +4,78 @@ import 'firebase/database';
 import 'firebase/storage';
 
 const config = {
-    apiKey: "AIzaSyDdAwZEPIHGmecudZQ2VGaYKtBRTX0U6aY",
-    authDomain: "modulus-e56e4.firebaseapp.com",
-    databaseURL: "https://modulus-e56e4.firebaseio.com",
-    projectId: "modulus-e56e4",
-    storageBucket: "modulus-e56e4.appspot.com",
-    messagingSenderId: "768709169703",
-    appId: "1:768709169703:web:a38f5dfb315550f831b402",
-    measurementId: "G-TX7CYMZJN7"
+    apiKey: "AIzaSyBsDkQalmIRHdE4saO2ZxoQSr0EW7gGyKQ",
+    authDomain: "maskweaver-424ad.firebaseapp.com",
+    databaseURL: "https://maskweaver-424ad.firebaseio.com",
+    projectId: "maskweaver-424ad",
+    storageBucket: "maskweaver-424ad.appspot.com",
+    messagingSenderId: "593170498681",
+    appId: "1:593170498681:web:e124e59bfdfbae636540a8",
+    measurementId: "G-Q34FWQBX5K"
 };
-
 
 class Firebase {
     constructor() {
         app.initializeApp(config);
 
-        this.auth1 = app.auth();
+        this.auth = app.auth();
         this.db = app.database();
-        this.storage = app.storage();
-        
+        this.storage = app.storage(); //adds firebase storage reference
     }
-    // *** Auth API ***
-    doCreateUserWithEmailAndPassword = (email, password) =>
-        this.auth1.createUserWithEmailAndPassword(email, password);
 
-    doChangePersist = () => 
-        this.auth1.setPersistence(app.auth.Auth.Persistence.SESSION);
+    // *** Auth API ***
+
+    doCreateUserWithEmailAndPassword = (email, password) =>
+        this.auth.createUserWithEmailAndPassword(email, password);
 
     doSignInWithEmailAndPassword = (email, password) =>
-        this.auth1.signInWithEmailAndPassword(email, password);
+        this.auth.signInWithEmailAndPassword(email, password);
 
-    doSignOut = () => this.auth1.signOut();
+    doSignOut = () => this.auth.signOut();
 
-    doPasswordReset = email => this.auth1.sendPasswordResetEmail(email);
+    doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
 
     doPasswordUpdate = password =>
-        this.auth1.currentUser.updatePassword(password);
+        this.auth.currentUser.updatePassword(password);
 
     // *** Merge Auth and DB User API *** //
+
     onAuthUserListener = (next, fallback) =>
-        this.auth1.onAuthStateChanged(authUser => {
+        this.auth.onAuthStateChanged(authUser => {
             if (authUser) {
                 this.user(authUser.uid)
                     .once('value')
                     .then(snapshot => {
                         const dbUser = snapshot.val();
+
                         // default empty roles
                         if (!dbUser.roles) {
-                            dbUser.roles = {};
+                            dbUser.roles = [];
                         }
+
                         // merge auth and db user
                         authUser = {
                             uid: authUser.uid,
                             email: authUser.email,
                             ...dbUser,
                         };
+
                         next(authUser);
                     });
-
             } else {
                 fallback();
             }
         });
 
     // *** User API ***
+
     user = uid => this.db.ref(`users/${uid}`);
+
     users = () => this.db.ref('users');
 
-    course = appID => this.db.ref(`courses/${appID}`);
-    courses = () => this.db.ref('courses');
+    challenge = cid => this.db.ref(`challenges/cid`);
 
-    modules = courseID => this.db.ref(`courses/${courseID}/modules`);
-
-    sub = sID => this.db.ref(`subscriptions/${sID}`);
-    subs = () => this.db.ref('subscriptions');
+    challenges = () => this.db.ref('challenges');
 }
-
-
 
 export default Firebase;
