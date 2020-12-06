@@ -73,7 +73,7 @@ class Firebase {
 
     users = () => this.db.ref('users');
 
-    challenge = cid => this.db.ref(`challenges/cid`);
+    challenge = cid => this.db.ref(`challenges/${cid}`);
 
     challenges = () => this.db.ref('challenges');
 }

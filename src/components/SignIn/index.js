@@ -171,7 +171,7 @@ function MasterVideoTile(props) {
     )
 }
 
-function ViewVideoPage() {
+function ViewVideoPage(props) {
     const size = useWindowSize();
     const [seconds, setSeconds] = useState(0);
     const [isActive, setIsActive] = useState(false);
@@ -180,15 +180,41 @@ function ViewVideoPage() {
 
     var sessionid = window.location.href.substring((window.location.href.indexOf("?")+4));
 
-    var masteryoutubelinkid = "k0EJ0Lk3dT8"; //temp fill
-    var arrayOfDelayStartSeconds = [15, 20]; //temp fill
-    var arrayOfDelayEndSeconds = [222, 275]; //temp fill
-    var arrayOfClipStartSeconds = [0, 7]; //temp fill
-    var arrayOfClipLinkIDs = ["-5q5mZbe3V8", "-5q5mZbe3V8"]; //temp fill
+    // var masteryoutubelinkid = ""; //temp fill
+    const [masteryoutubelinkid, setmasteryoutubelinkid] = useState("");
+    // var arrayOfDelayStartSeconds = []; //temp fill
+    const [arrayOfDelayStartSeconds, setarrayOfDelayStartSeconds] = useState([]);
+    // var arrayOfDelayEndSeconds = []; //temp fill
+    const [arrayOfDelayEndSeconds, setarrayOfDelayEndSeconds] = useState([]);
+    // var arrayOfClipStartSeconds = []; //temp fill
+    const [arrayOfClipStartSeconds, setarrayOfClipStartSeconds] = useState([]);
+    // var arrayOfClipLinkIDs = []; //temp fill   
+    const [arrayOfClipLinkIDs, setarrayOfClipLinkIDs] = useState([]);
     //note to self: clipend time is clipstart+delayend-delaystart, so no need to ask user for it or store it
-    //TODO: using sessionid
+    //DONE: using sessionid
     //  get master youtube link id
     //  fill arrays: arrayOfDelayStartSeconds, arrayOfDelayEndSeconds, arrayOfClipStartSeconds, arrayOfClipLinkIDs. ( just pull the corresponding string from database and do string.split(",") )
+
+    props.firebase.challenge(sessionid).on('value', snapshot => {
+        let items = snapshot.val();
+        if (masteryoutubelinkid != items.mainyt) {
+            setmasteryoutubelinkid(items.mainyt);
+            
+            // arrayOfClipStartSeconds = items.ClipStartSeconds.split(',');
+            // arrayOfDelayStartSeconds = items.DelayStartSeconds.split(',');
+            // arrayOfDelayEndSeconds = items.DelayEndSeconds.split(',');
+            // arrayOfClipLinkIDs = items.ClipLinkIDs.split(',');
+            setarrayOfClipStartSeconds(items.ClipStartSeconds.split(','));
+            setarrayOfDelayStartSeconds(items.DelayStartSeconds.split(','));
+            setarrayOfDelayEndSeconds(items.DelayEndSeconds.split(','));
+            setarrayOfClipLinkIDs(items.ClipLinkIDs.split(','));
+
+            console.log(arrayOfClipStartSeconds);
+            console.log(arrayOfDelayStartSeconds);
+            console.log(arrayOfDelayEndSeconds);
+            console.log(arrayOfClipLinkIDs);
+        }
+    })    
 
     function toggle() {
         setIsActive(!isActive);
@@ -215,27 +241,27 @@ function ViewVideoPage() {
         setSeconds(seconds => seconds + 1);
     }
 
-    function pausetime(event) {
-        setIsActive(false);
-        setformattedtime("");
-        event.preventDefault();
-    }
+    // function pausetime(event) {
+    //     setIsActive(false);
+    //     setformattedtime("");
+    //     event.preventDefault();
+    // }
 
-    function changetime(event) {
-        let userinput = event.target.value+"";
-         if (userinput.length===2) {
-            let newthing = userinput+=":";
-            setformattedtime(newthing);
-        } else if (userinput.length===5) {
-            let newseconds = parseInt(userinput.split(":")[1]) + (parseInt(userinput.split(":")[0])*60);
-            setSeconds(newseconds);
-            setbegun(true);
-            setIsActive(true);
-        } else {
-            setformattedtime(userinput);
-        }
-        event.preventDefault();
-    }
+    // function changetime(event) {
+    //     let userinput = event.target.value+"";
+    //      if (userinput.length===2) {
+    //         let newthing = userinput+=":";
+    //         setformattedtime(newthing);
+    //     } else if (userinput.length===5) {
+    //         let newseconds = parseInt(userinput.split(":")[1]) + (parseInt(userinput.split(":")[0])*60);
+    //         setSeconds(newseconds);
+    //         setbegun(true);
+    //         setIsActive(true);
+    //     } else {
+    //         setformattedtime(userinput);
+    //     }
+    //     event.preventDefault();
+    // }
 
     useEffect(() => {
         let interval = null;
@@ -257,36 +283,50 @@ function ViewVideoPage() {
     // <form class="timeform">
     //     <input type="text" value={formattedtime} onFocus={pausetime} onChange={changetime}/>
     // </form>
-    return (
-        <div class="viewvideopage">
-            {begun 
-            ?
-            <center><h2 className="time">{formattedtime}</h2></center>
-            :
-            <> </>}
-            <MasterVideoTile clickedVid={clickedVid} begun={begun} seconds={seconds} vidid={masteryoutubelinkid} width={size.width} height={size.height} />
-            <div class="rowofvids">
-            {
-                indexarray.map(
-                    index => (
-                        <VideoTile 
-                            vidid={arrayOfClipLinkIDs[index]} 
-                            start={arrayOfClipStartSeconds[index]} 
-                            end={arrayOfClipStartSeconds[index] + arrayOfDelayEndSeconds[index] - arrayOfDelayStartSeconds[index]} 
-                            width={size.width / 2} 
-                            height={size.height / 2}
-                            visible={seconds >= arrayOfDelayStartSeconds[index] && seconds <= arrayOfDelayEndSeconds[index]}
-                        />
+
+    if (masteryoutubelinkid == "") {
+        //display a loading screen
+        // window.setTimeout(this.render, 2000);
+        return (
+            <center>
+                <br /><br /><br /><br />
+                <h1>Loading</h1>
+            </center>
+        );
+        //set a timer to re-render the screen in 2 seconds            
+    }
+    else {
+        return (
+            <div class="viewvideopage">
+                {begun 
+                ?
+                <center><h2 className="time">{formattedtime}</h2></center>
+                :
+                <> </>}
+                <MasterVideoTile clickedVid={clickedVid} begun={begun} seconds={seconds} vidid={masteryoutubelinkid} width={size.width} height={size.height} />
+                <div class="rowofvids">
+                {
+                    indexarray.map(
+                        index => (
+                            <VideoTile 
+                                vidid={arrayOfClipLinkIDs[index]} 
+                                start={arrayOfClipStartSeconds[index]} 
+                                end={arrayOfClipStartSeconds[index] + arrayOfDelayEndSeconds[index] - arrayOfDelayStartSeconds[index]} 
+                                width={size.width / 2} 
+                                height={size.height / 2}
+                                visible={seconds >= arrayOfDelayStartSeconds[index] && seconds <= arrayOfDelayEndSeconds[index]}
+                            />
+                        )
                     )
-                )
-            }
+                }
+                </div>
             </div>
-        </div>
-    );
+        );
+    }
 }
 
 
-function CreateVideoPage() {
+function CreateVideoPage(props) {
     const [alldone, setalldone] = useState(false);
     const [finallink, setfinallink] = useState("");
 
@@ -402,8 +442,18 @@ function CreateVideoPage() {
         }
 
         var theirid = Date.now();
+        var data = {
+            mainyt: masteryoutubelinkid,
+            DelayStartSeconds: stringOfDelayStartSeconds,
+            DelayEndSeconds: stringOfDelayEndSeconds,
+            ClipStartSeconds: stringOfClipStartSeconds,
+            ClipLinkIDs: stringOfClipLinkIDs,
+        }
+        props.firebase.challenges().update({
+            [theirid] : data,
+        })
 
-        //TODO: upload the following to firebase in this db structure
+        // DONE
     //     [theirid]
 	//          -> mainyt: [masteryoutubelinkid]
 	//          -> DelayStartSeconds: [stringOfDelayStartSeconds]
@@ -558,19 +608,20 @@ function CreateVideoPage() {
     }
 }
 
-function SignInPage() {
+// function SignInPage(props) {
     
-    if (window.location.href.includes("?id=")) {
-        return (
-            <ViewVideoPage />
-        );
-    } else {
-        return (
-            <CreateVideoPage />
-        );
-    }
+//     if (window.location.href.includes("?id=")) {
+//         return (
+//             <ViewVideoPage />
+//         );
+//     } else {
+//         return (
+//             <CreateVideoPage 
+//                 firebase={this.props.firebase}/>
+//         );
+//     }
     
-}
+// }
 
 //NONE OF THE CODE BELOW MATTERS OR SHOULD BE TOUCHED BECAUSE SOMETHING WILL BREAK
 
@@ -586,57 +637,67 @@ class SignInFormBase extends Component {
 
         this.state = { ...INITIAL_STATE };
     }
-
-    onSubmit = event => {
-        const { email, password } = this.state;
-
-        this.props.firebase
-            .doSignInWithEmailAndPassword(email, password)
-            .then(() => {
-                this.setState({ ...INITIAL_STATE });
-                this.props.history.push(ROUTES.HOME);
-            })
-            .catch(error => {
-                this.setState({ error });
-            });
-
-        event.preventDefault();
-    };
-
-    onChange = event => {
-        this.setState({ [event.target.name]: event.target.value });
-    };
-
-    render() {
-        const { email, password, error } = this.state;
-
-        const isInvalid = password === '' || email === '';
-
-        return (
-            <form onSubmit={this.onSubmit}>
-                <input
-                    name="email"
-                    value={email}
-                    onChange={this.onChange}
-                    type="text"
-                    placeholder="Email Address"
-                /><br />
-                <input
-                    name="password"
-                    value={password}
-                    onChange={this.onChange}
-                    type="password"
-                    placeholder="Password"
-                /><br />
-                <button disabled={isInvalid} type="submit">
-                    Sign In
-                </button>
-                <br /><br />
-                {error && <p>{error.message}</p>}
-                <br /><br />
-            </form>
-        );
+    render(){
+        if (window.location.href.includes("?id=")) {
+            return (
+                <ViewVideoPage firebase={this.props.firebase}/>
+            );
+        } else {
+            return (
+                <CreateVideoPage firebase={this.props.firebase}/>
+            );
+        }
     }
+    // onSubmit = event => {
+    //     const { email, password } = this.state;
+
+    //     this.props.firebase
+    //         .doSignInWithEmailAndPassword(email, password)
+    //         .then(() => {
+    //             this.setState({ ...INITIAL_STATE });
+    //             this.props.history.push(ROUTES.HOME);
+    //         })
+    //         .catch(error => {
+    //             this.setState({ error });
+    //         });
+
+    //     event.preventDefault();
+    // };
+
+    // onChange = event => {
+    //     this.setState({ [event.target.name]: event.target.value });
+    // };
+
+    // render() {
+    //     const { email, password, error } = this.state;
+
+    //     const isInvalid = password === '' || email === '';
+
+    //     return (
+    //         <form onSubmit={this.onSubmit}>
+    //             <input
+    //                 name="email"
+    //                 value={email}
+    //                 onChange={this.onChange}
+    //                 type="text"
+    //                 placeholder="Email Address"
+    //             /><br />
+    //             <input
+    //                 name="password"
+    //                 value={password}
+    //                 onChange={this.onChange}
+    //                 type="password"
+    //                 placeholder="Password"
+    //             /><br />
+    //             <button disabled={isInvalid} type="submit">
+    //                 Sign In
+    //             </button>
+    //             <br /><br />
+    //             {error && <p>{error.message}</p>}
+    //             <br /><br />
+    //         </form>
+    //     );
+    // }
 }
 
 const SignInForm = compose(
@@ -644,6 +705,6 @@ const SignInForm = compose(
     withFirebase,
 )(SignInFormBase);
 
-export default SignInPage;
+//export default withFirebase(SignInPage);
 
-export { SignInForm };
+export default (SignInForm);
